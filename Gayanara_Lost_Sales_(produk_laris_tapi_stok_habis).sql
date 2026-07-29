@@ -6,7 +6,6 @@ SELECT
 FROM products p
 JOIN order_items oi ON p.product_id = oi.product_id
 JOIN orders o ON o.order_id = oi.order_id
-WHERE o.order_status NOT IN ('cancelled', 'returned')
+WHERE o.order_status NOT IN ('cancelled', 'returned') AND p.stock = 0
 GROUP BY p.product_id, p.name, p.brand, p.stock
-HAVING p.stock = 0
 ORDER BY total_terjual DESC;
