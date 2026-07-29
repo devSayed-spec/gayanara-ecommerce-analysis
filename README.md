@@ -1,47 +1,59 @@
-# Gayanara: Best-Selling Products vs Dead Stock Analysis
-**Role:** Data Analyst (Independent Project) | **Tools:** MySQL | **Date:** Jul 2026
-*The dataset and case studies are provided by the Ngulik Data platform, worked on independently as part of the process of learning SQL and business analysis.*
+# Gayanara: Analisis Produk Terlaris vs Dead Stock
 
-## Business Understanding
-**Problem:** Gayanara's buying team has a limited restock budget but lacks clear data on which products actually sell best, which brands drive the most value, and which products are at risk of stockouts or sitting unsold in the warehouse.
+**Peran:** Data Analyst (Proyek Mandiri) | **Tools:** MySQL | **Tanggal:** Juli 2026
 
-**Objective:** Analyze Gayanara's sales and inventory data to help the buying team allocate the restock budget more precisely.
+*Dataset dan studi kasus disediakan oleh platform Ngulik Data, dikerjakan secara mandiri sebagai bagian dari proses belajar SQL dan analisis bisnis.*
 
-**Business Questions:**
-1. Which products make up the Top 10 best-selling products?
-2. Which brand generates the highest revenue, and does it align with the brand whose products sell the most units?
-3. Which products qualify as *dead stock* (high inventory, zero sales) and should be considered for discounting?
-4. Which products qualify as *lost sales* (strong sales history but currently out of stock) and should be prioritized for restocking?
+## Pemahaman Bisnis
 
-## Process
-- Imported 5 raw datasets (customers, orders, order_items, products, reviews) into MySQL
-- Fixed date column data types using `ALTER TABLE` after the initial import failed
-- Identified and excluded invalid order statuses (cancelled, returned) before analysis
-- Joined `order_items`, `orders`, and `products` to rank the Top 10 best-selling products
-- Aggregated revenue by brand to compare against units sold
-- Used a subquery with `LEFT JOIN` to identify dead stock (unsold inventory)
-- Used `INNER JOIN` with `HAVING` to identify lost sales (out-of-stock, high demand)
+**Masalah:** Tim buying Gayanara memiliki anggaran restock yang terbatas, tetapi belum punya data yang jelas mengenai produk mana yang benar-benar paling laku, brand mana yang paling banyak menyumbang revenue, dan produk mana yang berisiko kehabisan stok atau justru menumpuk tidak laku di gudang.
 
-## Key Findings
-**Top 10 Best-Selling Products** are concentrated in two brands: **Riang Apparel** (4 of 10 products) and **Tropika Style** (3 of 10 products), together accounting for 70% of the list. The remainder is spread across Senja Wear, Pesona Indo, and Kanvas Lokal — indicating demand for casual fashion items (dresses, shirts, pants) is concentrated rather than evenly distributed.
+**Tujuan:** Menganalisis data penjualan dan inventori Gayanara untuk membantu tim buying mengalokasikan anggaran restock secara lebih tepat sasaran.
 
-**Brand with the Highest Revenue** Riang Apparel and NusaBrand are the top two brands by revenue (Rp67.9M vs Rp67.4M — under 1% apart). Notably, NusaBrand ranks 2nd in revenue despite not appearing in the Top 10 best-selling list, suggesting it sells fewer units at a higher price point — a possible premium/high-margin strategy compared to volume-driven brands like Riang Apparel.
+**Pertanyaan Bisnis:**
 
-**Dead Stock (Discount Recommendation)** One product was found with 120 units of unsold inventory, a strong candidate for discounting or bundling.
+1. Produk apa saja yang termasuk dalam Top 10 produk terlaris?
+2. Brand mana yang menghasilkan revenue tertinggi, dan apakah sama dengan brand yang unit terjualnya paling banyak?
+3. Produk apa saja yang tergolong *dead stock* (stok tinggi, penjualan nol) dan layak dipertimbangkan untuk diskon?
+4. Produk apa saja yang tergolong *lost sales* (riwayat penjualan bagus tapi stok saat ini habis) dan perlu diprioritaskan untuk direstock?
 
-**Lost Sales (Priority Restock Recommendation)** 11 products with strong sales history are currently at zero stock. The "Dress Mini Casual" (Riang Apparel) appears in 3 out-of-stock variants with the highest combined lost-sales volume — reinforcing Riang Apparel as the strongest-demand brand overall, consistent with its dominance in the Top 10.
+## Proses
 
-## Recommendations
-- **Priority restock:** allocate budget first to products on the Lost Sales list, especially the Dress Mini Casual variants (Riang Apparel), given their consistent demand across both the Top 10 and Lost Sales lists
-- **Discount/bundling:** the dead stock "Leather Belt" (Kanvas Lokal) with 120 unsold units should be pushed through promotions rather than restocked
-- **Brand-level evaluation:** Riang Apparel leads on volume-driven demand, while NusaBrand appears better suited to a premium/high-margin strategy — these two brands likely warrant different restock and pricing approaches
+- Mengimpor 5 dataset mentah (customers, orders, order_items, products, reviews) ke MySQL
+- Memperbaiki tipe data kolom tanggal menggunakan `ALTER TABLE` setelah import awal gagal
+- Mengidentifikasi dan mengeluarkan status order yang tidak valid (dibatalkan, dikembalikan) sebelum analisis
+- Menggabungkan `order_items`, `orders`, dan `products` untuk mengurutkan Top 10 produk terlaris
+- Mengagregasi revenue per brand untuk dibandingkan dengan unit terjual
+- Menggunakan subquery dengan `LEFT JOIN` untuk mengidentifikasi dead stock (inventori tidak terjual)
+- Menggunakan `INNER JOIN` dengan `WHERE` untuk mengidentifikasi lost sales (stok habis, permintaan tinggi)
 
-## What I Learned
-- `LEFT JOIN` was needed to keep unsold products visible (dead stock), while `INNER JOIN` was enough for lost sales since it only needed products with sales history
-- Pre-aggregating data in a subquery before joining helped correctly separate valid orders from cancelled/returned ones
-- Revenue and units sold don't always align — a brand can earn the highest revenue without selling the most units
-- "Low stock" isn't one problem: dead stock needs discounting, lost sales needs urgent restocking
-- Narrative claims need to be checked against the actual result grid, not just the query logic — an earlier draft of this analysis described demand as "evenly distributed" across brands, but re-checking the Top 10 output showed two brands actually accounted for 70% of it
+## Temuan Utama
+
+**Top 10 Produk Terlaris**
+Didominasi oleh dua brand: **Riang Apparel** (4 dari 10 produk) dan **Tropika Style** (3 dari 10 produk), yang bersama-sama menyumbang 70% dari daftar. Sisanya tersebar di Senja Wear, Pesona Indo, dan Kanvas Lokal, menunjukkan permintaan terkonsentrasi pada kategori fashion kasual (dress, kemeja, celana).
+
+**Brand dengan Revenue Tertinggi**
+Riang Apparel dan NusaBrand adalah dua brand teratas dari sisi revenue (Rp67,9M vs Rp67,4M, selisih kurang dari 1%). Menariknya, NusaBrand berada di posisi ke-2 meskipun tidak muncul di Top 10 produk terlaris, mengindikasikan brand ini menjual lebih sedikit unit namun dengan harga rata-rata lebih tinggi (kemungkinan strategi premium/margin tinggi dibanding brand volume-driven seperti Riang Apparel).
+
+**Dead Stock (Rekomendasi Diskon)**
+Ditemukan satu produk dengan 120 unit stok tidak terjual, kandidat kuat untuk diskon atau bundling.
+
+**Lost Sales (Rekomendasi Prioritas Restock)**
+11 produk dengan riwayat penjualan kuat saat ini berstok nol. "Dress Mini Casual" (Riang Apparel) muncul dengan volume lost sales tertinggi, memperkuat posisi Riang Apparel sebagai brand dengan permintaan terkuat, konsisten dengan dominasinya di Top 10.
+
+## Rekomendasi
+
+- **Prioritas restock:** alokasikan anggaran terlebih dahulu untuk produk di daftar Lost Sales, khususnya varian Dress Mini Casual (Riang Apparel), mengingat permintaannya konsisten di Top 10 maupun Lost Sales
+- **Diskon/bundling:** dead stock "Leather Belt" (Kanvas Lokal) dengan 120 unit tidak terjual sebaiknya didorong keluar lewat promosi, bukan direstock
+- **Evaluasi tingkat brand:** Riang Apparel unggul di permintaan berbasis volume, sementara NusaBrand tampak lebih cocok untuk strategi premium/margin tinggi, kedua brand ini mungkin memerlukan pendekatan restock dan pricing yang berbeda
+
+## Apa yang Saya Pelajari
+
+- `LEFT JOIN` diperlukan agar produk tidak terjual tetap terlihat (dead stock), sementara `INNER JOIN` sudah cukup untuk lost sales karena hanya butuh produk dengan riwayat penjualan
+- Pre-agregasi data dalam subquery sebelum join membantu memisahkan order valid dari yang dibatalkan/dikembalikan secara akurat
+- Revenue dan unit terjual tidak selalu selaras, brand bisa punya revenue tertinggi tanpa menjual unit paling banyak
+- Stok rendah bukan satu masalah tunggal: dead stock butuh diskon, lost sales butuh restock mendesak
+- Klaim naratif perlu dicek ulang terhadap hasil data aktual, bukan hanya logika query. Draf awal analisis ini sempat menyebut permintaan merata antar brand, tapi setelah dicek ulang, dua brand ternyata menyumbang 70% dari Top 10
 
 ## Files
 
