@@ -1,6 +1,6 @@
 # Gayanara: Analisis Produk Terlaris vs Dead Stock
 
-**Peran:** Data Analyst (Proyek Mandiri) | **Tools:** MySQL | **Tanggal:** Juni 2026
+**Peran:** Data Analyst (Proyek Mandiri) | **Tools:** MySQL | **Tanggal:** Juli 2026
 
 *Dataset dan studi kasus disediakan oleh platform Ngulik Data, dikerjakan secara mandiri sebagai bagian dari proses belajar SQL dan analisis bisnis.*
 
