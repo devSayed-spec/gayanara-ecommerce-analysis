@@ -1,6 +1,6 @@
-# Gayanara: Best-Selling Products, Dead Stock, and Potential Lost Sales Analysis
+# Gayanara: Best-Selling Products, Dead Stock, and Potential Lost Sales
 
-SQL portfolio project focused on sales, inventory, and restocking analysis for a fictional retail business.
+SQL portfolio project focused on sales, inventory, and restocking decisions for a fictional retail business.
 
 ## Project Information
 
@@ -12,18 +12,23 @@ This project was completed independently using a dataset and business case provi
 
 ## Business Problem
 
-Gayanara's buying team needs to restock products with a limited budget.
+Gayanara's buying team needs to restock products, but the available budget is limited.
 
-The team needs to know which products sell the most, which brands are the strongest revenue contributors, which popular products are currently out of stock, and which products are accumulating inventory without sales.
+They need to know which products sell the most, which brands contribute the most revenue, which popular products are out of stock, and which products are sitting in inventory without sales.
 
-The goal is to prevent restocking budget from being allocated to the wrong products.
+Without this information, the team may restock slow-moving products while leaving high-demand products unavailable.
+
+## Objective
+
+This project analyzes sales and inventory data to help the buying team decide which products should be restocked, discounted, or reviewed further.
 
 ## Business Questions
 
-1. Which products are included in the Top 10 best-selling products based on total units sold?
+1. Which products are included in the Top 10 based on total units sold?
 2. Which brands generate the highest revenue?
-3. Which popular products have zero current stock and may create potential lost sales?
-4. Which products have available stock but zero recorded sales and should be considered dead stock?
+3. Does the brand with the highest revenue also sell the most units?
+4. Which products are considered dead stock, meaning they have available inventory but zero recorded sales?
+5. Which products have sales history but zero current stock, indicating potential lost sales?
 
 ## Dataset
 
@@ -50,102 +55,123 @@ The analysis uses five tables:
 
 ## Analysis Process
 
-1. Imported five raw datasets into MySQL.
+1. Imported five raw datasets into MySQL: `customers`, `orders`, `order_items`, `products`, and `reviews`.
 2. Fixed date data types using `ALTER TABLE`.
-3. Excluded cancelled and returned orders before calculating sales and revenue.
-4. Combined `orders`, `order_items`, and `products` to identify the Top 10 best-selling products.
-5. Calculated revenue by brand and compared it with total unit sales.
-6. Used `LEFT JOIN` to identify dead stock, including products with stock but zero recorded sales.
-7. Used `INNER JOIN` to identify popular products with historical sales but zero current stock.
-8. Used pre-aggregation in subqueries to ensure only valid orders were included in revenue calculations.
+3. Excluded cancelled and returned orders before calculating revenue and units sold.
+4. Joined `orders`, `order_items`, and `products` to rank the Top 10 best-selling products.
+5. Calculated revenue by brand and compared it with total units sold.
+6. Used subqueries and `LEFT JOIN` to identify dead stock.
+7. Used `INNER JOIN` to identify products with sales history but zero current stock.
+8. Validated the query results and corrected the revenue calculation and order-status filtering logic.
 
 ## Key Findings
 
-### Top 10 Products Are Concentrated in Two Brands
+### Top 10 Products Are Dominated by Two Brands
 
-Riang Apparel contributed 4 out of 10 products in the Top 10 best-selling list, while Tropika Style contributed 3 products.
+Riang Apparel contributed 4 out of 10 products in the Top 10 list, while Tropika Style contributed 3 products.
 
-Together, these two brands represented 70% of the Top 10 products. This shows that demand is concentrated rather than evenly distributed across brands.
+Together, the two brands accounted for 70% of the Top 10 best-selling products. Demand is not evenly distributed across brands. Casual fashion items such as dresses, shirts, and pants dominate the list.
 
-### Revenue and Unit Sales Tell Different Stories
+### Riang Apparel and NusaBrand Show Different Sales Patterns
 
 Riang Apparel generated the highest revenue at **Rp67.939.000**, followed closely by NusaBrand at **Rp67.409.000**.
 
-However, NusaBrand did not appear in the Top 10 best-selling products. This indicates that NusaBrand generated high revenue with fewer units sold, likely because of a higher average selling price compared with volume-driven brands such as Riang Apparel.
+However, NusaBrand did not appear in the Top 10 based on units sold. This suggests that NusaBrand generated high revenue with fewer units, likely because its products have a higher average selling price than Riang Apparel, which is stronger in sales volume.
 
-### One Product Is Classified as Dead Stock
+### Leather Belt Is Dead Stock
 
 Leather Belt from Kanvas Lokal had:
 
 - **120 units in stock**
 - **Zero recorded sales**
 
-This product is a strong candidate for discount, bundling, or promotion rather than restocking.
+The product should not be prioritized for restocking. A discount, bundle, or promotion would be a more reasonable next step to move the existing inventory.
 
-### Eleven Products Indicate Potential Lost Sales
+### Eleven Products Show Potential Lost Sales
 
-Eleven products had strong historical sales but currently had zero stock.
+I found 11 products with sales history but zero current stock.
 
-Dress Mini Casual from Riang Apparel had the highest sales volume among the out-of-stock products. This indicates potential lost sales and supports prioritizing the product for restocking.
+Among the out-of-stock products, Dress Mini Casual from Riang Apparel had the strongest sales history. It should be prioritized for restocking because customers may not be able to purchase a product that has already shown demand.
+
+## What I Learned
+
+- Cancelled and returned orders need to be excluded before calculating revenue or units sold.
+- Pre-aggregation in a subquery helps make sure that revenue calculations only include valid orders.
+- `subtotal_idr` is more suitable than `unit_price_idr` for calculating revenue because it already reflects the quantity purchased.
+- Revenue and unit sales do not always move together. A brand can generate high revenue even with lower unit sales.
+- Dead stock and out-of-stock products need different actions. Dead stock should be cleared through discounts or bundles, while products with potential lost sales should be prioritized for restocking.
+- Business conclusions need to be checked against the data. A conclusion that sounds reasonable is not always supported by the query results.
+
+## Mistakes I Found and Fixed
+
+### Using the Wrong Column for Brand Revenue
+
+In the first version of the brand revenue query, I used `unit_price_idr`.
+
+This caused total revenue to be lower than it should have been because the number of units purchased was not included. I corrected the calculation by using `subtotal_idr`.
+
+### Filtering Order Status in the Wrong Place
+
+I initially placed the order-status filter in the `WHERE` clause.
+
+This caused products with no sales to disappear from the `LEFT JOIN` result, even though those products were important for dead stock analysis. I fixed this by filtering invalid orders in a subquery before the join.
+
+### Date Import Failed
+
+When importing the CSV files, I changed several columns directly to `DATETIME` without checking the original date format.
+
+Three tables failed to import. I fixed this by importing the date columns as text first, then converting them with `ALTER TABLE`.
+
+### My First Conclusion Was Incorrect
+
+An early draft suggested that demand was fairly evenly distributed across brands.
+
+After checking the results again, Riang Apparel and Tropika Style were found to account for 70% of the Top 10 best-selling products. I revised the conclusion to reflect that demand is actually concentrated.
+
+## What I Would Do Differently Next Time
+
+- Analyze sales trends over time using `order_date`, instead of relying only on total aggregate values.
+- Use the `customers` and `reviews` tables to explore customer segments and customer satisfaction.
+- Check date formats before changing column types during data import.
+- Review every written conclusion against the actual query results before writing the final summary.
 
 ## Recommendations
 
-1. Prioritize restocking products in the potential lost-sales list, especially Dress Mini Casual from Riang Apparel.
-2. Do not restock Leather Belt from Kanvas Lokal before reducing the existing inventory.
-3. Use discounts, bundles, or promotions to move dead stock.
-4. Prioritize product availability for Riang Apparel because of its strong demand in both the Top 10 list and potential lost-sales analysis.
-5. Review NusaBrand's pricing and product strategy because it generates high revenue despite lower unit volume.
+### Prioritize Restocking Products with Potential Lost Sales
 
-## Important Data Validation
+Restocking budget should first be allocated to products with strong sales history but zero current stock.
 
-### Revenue Aggregation Error
+Dress Mini Casual from Riang Apparel is a priority because it has strong historical sales and is currently unavailable.
 
-The first brand revenue query used `unit_price_idr` instead of `subtotal_idr`.
+### Do Not Restock Leather Belt Before Clearing Existing Stock
 
-This underestimated total revenue because the calculation did not account for the number of units purchased. The query was corrected by using the transaction subtotal field.
+Leather Belt from Kanvas Lokal still has 120 units in stock and no recorded sales.
 
-### LEFT JOIN Filtering Issue
+Instead of buying more inventory, the business should try discounts, bundles, or promotions to move the existing stock.
 
-A filter for order status was initially placed in the `WHERE` clause.
+### Use Different Approaches for Riang Apparel and NusaBrand
 
-This broke the `LEFT JOIN` logic and excluded products with zero sales from the dead stock analysis. The issue was corrected by filtering invalid order statuses before the join through a subquery.
+Riang Apparel is strong in sales volume and appears in both the Top 10 list and the potential lost-sales list.
 
-### Date Conversion Issue
-
-Initial date conversion during CSV import failed because the original date format was incompatible with `DATETIME`.
-
-The issue was resolved by importing date columns as text first and converting them using `ALTER TABLE`.
-
-### Narrative Validation
-
-An early draft concluded that demand was evenly distributed across brands.
-
-After validating the results, Riang Apparel and Tropika Style were found to account for 70% of the Top 10 best-selling products. The conclusion was revised to reflect demand concentration.
-
-## Future Improvements
-
-- Analyze monthly sales trends using `order_date`.
-- Calculate repeat purchase behavior and average order value.
-- Use `customers` and `reviews` tables for customer segmentation and satisfaction analysis.
-- Add product-level profitability analysis if cost data becomes available.
+NusaBrand generates high revenue despite not appearing in the Top 10 by unit sales. Riang Apparel should be kept in stock, while NusaBrand can be reviewed further from a pricing and product-positioning perspective.
 
 ## SQL Files
 
 - `Gayanara_top_10_produk_terlaris.sql`  
-  Identifies the Top 10 best-selling products based on total units sold.
+  Identifies the Top 10 products based on total units sold.
 
 - `Gayanara_Brand_dengan_Revenue_Terbesar.sql`  
   Calculates and ranks total revenue by brand.
 
 - `Gayanara_Lost_Sales.sql`  
-  Identifies high-demand products with zero current stock, indicating potential lost sales.
+  Identifies products with sales history but zero current stock, indicating potential lost sales.
 
 - `Gayanara_Dead_Stock.sql`  
   Identifies products with available inventory but zero recorded sales.
 
 ## Full Case Study
 
-For detailed business context, SQL query explanations, data validation notes, and learning reflections, read the complete case study on Notion:
+For the complete business context, detailed SQL explanations, and learning notes, read the full case study on Notion:
 
 [Read the full Gayanara Sales and Inventory Analysis case study](https://bit.ly/4fgJ6Zv)
 
