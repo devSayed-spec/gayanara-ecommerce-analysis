@@ -6,7 +6,7 @@ SQL portfolio project focused on sales, inventory, and restocking analysis for a
 
 **Role:** Data Analyst, Independent Project  
 **Tools:** MySQL  
-**Date:** July 2026  
+**Completed:** July 2026  
 
 This project was completed independently using a dataset and business case provided by Ngulik Data.
 
