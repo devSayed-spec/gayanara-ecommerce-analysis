@@ -1,6 +1,6 @@
-# Gayanara: Best-Selling Products, Dead Stock, and Stockout Risk Analysis
+# Gayanara: Best-Selling Products, Dead Stock, and Potential Lost Sales Analysis
 
-SQL portfolio project focused on sales and inventory analysis for a fictional retail business.
+SQL portfolio project focused on sales, inventory, and restocking analysis for a fictional retail business.
 
 ## Project Information
 
@@ -12,16 +12,18 @@ This project was completed independently using a dataset and business case provi
 
 ## Business Problem
 
-Gayanara's buying team has a limited restocking budget but lacks visibility into which products have strong demand, which brands generate the highest revenue, and which products should be restocked or cleared from inventory.
+Gayanara's buying team needs to restock products with a limited budget.
 
-This analysis helps the team make better decisions for restocking, discounting, and inventory allocation.
+The team needs to know which products sell the most, which brands are the strongest revenue contributors, which popular products are currently out of stock, and which products are accumulating inventory without sales.
+
+The goal is to prevent restocking budget from being allocated to the wrong products.
 
 ## Business Questions
 
-1. Which products are included in the Top 10 best-selling products?
-2. Which brands generate the highest revenue, and does this align with unit sales?
-3. Which products have available inventory but zero recorded sales?
-4. Which products have historical sales but currently have zero stock?
+1. Which products are included in the Top 10 best-selling products based on total units sold?
+2. Which brands generate the highest revenue?
+3. Which popular products have zero current stock and may create potential lost sales?
+4. Which products have available stock but zero recorded sales and should be considered dead stock?
 
 ## Dataset
 
@@ -51,19 +53,19 @@ The analysis uses five tables:
 1. Imported five raw datasets into MySQL.
 2. Fixed date data types using `ALTER TABLE`.
 3. Excluded cancelled and returned orders before calculating sales and revenue.
-4. Combined `orders`, `order_items`, and `products` to identify best-selling products.
-5. Calculated revenue by brand and compared it with unit sales.
-6. Used `LEFT JOIN` to identify products with available inventory but zero recorded sales.
-7. Used `INNER JOIN` to identify products with historical sales but zero current stock.
-8. Used pre-aggregation in subqueries to ensure that only valid orders were included in revenue calculations.
+4. Combined `orders`, `order_items`, and `products` to identify the Top 10 best-selling products.
+5. Calculated revenue by brand and compared it with total unit sales.
+6. Used `LEFT JOIN` to identify dead stock, including products with stock but zero recorded sales.
+7. Used `INNER JOIN` to identify popular products with historical sales but zero current stock.
+8. Used pre-aggregation in subqueries to ensure only valid orders were included in revenue calculations.
 
 ## Key Findings
 
 ### Top 10 Products Are Concentrated in Two Brands
 
-Riang Apparel contributed 4 out of 10 products in the Top 10 list, while Tropika Style contributed 3 products.
+Riang Apparel contributed 4 out of 10 products in the Top 10 best-selling list, while Tropika Style contributed 3 products.
 
-Together, these two brands represented 70% of the Top 10 best-selling products. Demand is concentrated rather than evenly distributed across brands.
+Together, these two brands represented 70% of the Top 10 products. This shows that demand is concentrated rather than evenly distributed across brands.
 
 ### Revenue and Unit Sales Tell Different Stories
 
@@ -71,28 +73,28 @@ Riang Apparel generated the highest revenue at **Rp67.939.000**, followed closel
 
 However, NusaBrand did not appear in the Top 10 best-selling products. This indicates that NusaBrand generated high revenue with fewer units sold, likely because of a higher average selling price compared with volume-driven brands such as Riang Apparel.
 
-### One Product Requires Dead Stock Review
+### One Product Is Classified as Dead Stock
 
 Leather Belt from Kanvas Lokal had:
 
 - **120 units in stock**
 - **Zero recorded sales**
 
-The product is a strong candidate for discount, bundling, or promotion rather than restocking.
+This product is a strong candidate for discount, bundling, or promotion rather than restocking.
 
-### Eleven Products Have Stockout Risk
+### Eleven Products Indicate Potential Lost Sales
 
-Eleven products had historical sales but currently had zero stock.
+Eleven products had strong historical sales but currently had zero stock.
 
-Dress Mini Casual from Riang Apparel showed the strongest historical sales among out-of-stock products. This supports the finding that Riang Apparel has strong demand and should be prioritized in restocking decisions.
+Dress Mini Casual from Riang Apparel had the highest sales volume among the out-of-stock products. This indicates potential lost sales and supports prioritizing the product for restocking.
 
 ## Recommendations
 
-1. Prioritize restocking products in the stockout-risk list, especially Dress Mini Casual from Riang Apparel.
-2. Do not restock Leather Belt from Kanvas Lokal before reducing existing inventory.
-3. Use discounts, bundles, or promotions to move products with zero recorded sales.
-4. Prioritize product availability for Riang Apparel because of its strong demand.
-5. Evaluate NusaBrand with a higher-value product strategy because of its strong revenue contribution despite lower unit volume.
+1. Prioritize restocking products in the potential lost-sales list, especially Dress Mini Casual from Riang Apparel.
+2. Do not restock Leather Belt from Kanvas Lokal before reducing the existing inventory.
+3. Use discounts, bundles, or promotions to move dead stock.
+4. Prioritize product availability for Riang Apparel because of its strong demand in both the Top 10 list and potential lost-sales analysis.
+5. Review NusaBrand's pricing and product strategy because it generates high revenue despite lower unit volume.
 
 ## Important Data Validation
 
@@ -130,13 +132,13 @@ After validating the results, Riang Apparel and Tropika Style were found to acco
 ## SQL Files
 
 - `Gayanara_top_10_produk_terlaris.sql`  
-  Identifies the Top 10 best-selling products.
+  Identifies the Top 10 best-selling products based on total units sold.
 
 - `Gayanara_Brand_dengan_Revenue_Terbesar.sql`  
   Calculates and ranks total revenue by brand.
 
 - `Gayanara_Lost_Sales.sql`  
-  Identifies products with historical sales but zero current stock.
+  Identifies high-demand products with zero current stock, indicating potential lost sales.
 
 - `Gayanara_Dead_Stock.sql`  
   Identifies products with available inventory but zero recorded sales.
