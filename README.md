@@ -1,66 +1,136 @@
-# Gayanara: Analisis Produk Terlaris vs Dead Stock
+# Gayanara: Best-Selling Products, Dead Stock, and Lost Sales Analysis
 
-**Peran:** Data Analyst (Proyek Mandiri) | **Tools:** MySQL | **Tanggal:** Juli 2026
+SQL portfolio project focused on sales and inventory analysis for a fictional retail business.
 
-*Dataset dan studi kasus disediakan oleh platform Ngulik Data, dikerjakan secara mandiri sebagai bagian dari proses belajar SQL dan analisis bisnis.*
+## Project Information
 
-## Pemahaman Bisnis
+**Role:** Data Analyst, Independent Project  
+**Tools:** MySQL  
+**Date:** July 2026  
 
-**Masalah:** Tim buying Gayanara memiliki anggaran restock yang terbatas, tetapi belum punya data yang jelas mengenai produk mana yang benar-benar paling laku, brand mana yang paling banyak menyumbang revenue, dan produk mana yang berisiko kehabisan stok atau justru menumpuk tidak laku di gudang.
+This project was completed independently using a dataset and business case provided by Ngulik Data.
 
-**Tujuan:** Menganalisis data penjualan dan inventori Gayanara untuk membantu tim buying mengalokasikan anggaran restock secara lebih tepat sasaran.
+## Business Problem
 
-**Pertanyaan Bisnis:**
+Gayanara's buying team has a limited restocking budget but lacks visibility into which products have strong demand, which brands generate the highest revenue, and which products should be restocked or cleared from inventory.
 
-1. Produk apa saja yang termasuk dalam Top 10 produk terlaris?
-2. Brand mana yang menghasilkan revenue tertinggi, dan apakah sama dengan brand yang unit terjualnya paling banyak?
-3. Produk apa saja yang tergolong *dead stock* (stok tinggi, penjualan nol) dan layak dipertimbangkan untuk diskon?
-4. Produk apa saja yang tergolong *lost sales* (riwayat penjualan bagus tapi stok saat ini habis) dan perlu diprioritaskan untuk direstock?
+This analysis helps the team make better restocking, discount, and product-prioritization decisions.
 
-## Proses
+## Business Questions
 
-- Mengimpor 5 dataset mentah (customers, orders, order_items, products, reviews) ke MySQL
-- Memperbaiki tipe data kolom tanggal menggunakan `ALTER TABLE` setelah import awal gagal
-- Mengidentifikasi dan mengeluarkan status order yang tidak valid (dibatalkan, dikembalikan) sebelum analisis
-- Menggabungkan `order_items`, `orders`, dan `products` untuk mengurutkan Top 10 produk terlaris
-- Mengagregasi revenue per brand untuk dibandingkan dengan unit terjual
-- Menggunakan subquery dengan `LEFT JOIN` untuk mengidentifikasi dead stock (inventori tidak terjual)
-- Menggunakan `INNER JOIN` dengan `WHERE` untuk mengidentifikasi lost sales (stok habis, permintaan tinggi)
+1. Which products are included in the Top 10 best-selling products?
+2. Which brands generate the highest revenue, and does this align with unit sales?
+3. Which products are dead stock and should be considered for discount or bundling?
+4. Which products have strong sales history but currently have zero stock?
 
-## Temuan Utama
+## Dataset
 
-**Top 10 Produk Terlaris**
-Didominasi oleh dua brand: **Riang Apparel** (4 dari 10 produk) dan **Tropika Style** (3 dari 10 produk), yang bersama-sama menyumbang 70% dari daftar. Sisanya tersebar di Senja Wear, Pesona Indo, dan Kanvas Lokal, menunjukkan permintaan terkonsentrasi pada kategori fashion kasual (dress, kemeja, celana).
+The analysis uses five tables:
 
-**Brand dengan Revenue Tertinggi**
-Riang Apparel dan NusaBrand adalah dua brand teratas dari sisi revenue (Rp67,9M vs Rp67,4M, selisih kurang dari 1%). Menariknya, NusaBrand berada di posisi ke-2 meskipun tidak muncul di Top 10 produk terlaris, mengindikasikan brand ini menjual lebih sedikit unit namun dengan harga rata-rata lebih tinggi (kemungkinan strategi premium/margin tinggi dibanding brand volume-driven seperti Riang Apparel).
+- `customers`
+- `orders`
+- `order_items`
+- `products`
+- `reviews`
 
-**Dead Stock (Rekomendasi Diskon)**
-Ditemukan satu produk dengan 120 unit stok tidak terjual, kandidat kuat untuk diskon atau bundling.
+## Tools and SQL Concepts
 
-**Lost Sales (Rekomendasi Prioritas Restock)**
-11 produk dengan riwayat penjualan kuat saat ini berstok nol. "Dress Mini Casual" (Riang Apparel) muncul dengan volume lost sales tertinggi, memperkuat posisi Riang Apparel sebagai brand dengan permintaan terkuat, konsisten dengan dominasinya di Top 10.
+- MySQL
+- `INNER JOIN`
+- `LEFT JOIN`
+- Subqueries
+- Pre-aggregation
+- `GROUP BY`
+- `ORDER BY`
+- Aggregate functions
+- `WHERE`
+- `ALTER TABLE`
 
-## Rekomendasi
+## Analysis Process
 
-- **Prioritas restock:** alokasikan anggaran terlebih dahulu untuk produk di daftar Lost Sales, khususnya varian Dress Mini Casual (Riang Apparel), mengingat permintaannya konsisten di Top 10 maupun Lost Sales
-- **Diskon/bundling:** dead stock "Leather Belt" (Kanvas Lokal) dengan 120 unit tidak terjual sebaiknya didorong keluar lewat promosi, bukan direstock
-- **Evaluasi tingkat brand:** Riang Apparel unggul di permintaan berbasis volume, sementara NusaBrand tampak lebih cocok untuk strategi premium/margin tinggi, kedua brand ini mungkin memerlukan pendekatan restock dan pricing yang berbeda
+1. Imported five raw datasets into MySQL.
+2. Fixed date data types using `ALTER TABLE`.
+3. Excluded cancelled and returned orders before calculating sales and revenue.
+4. Combined orders, order items, and products to identify best-selling products.
+5. Calculated revenue by brand and compared it with unit sales.
+6. Used `LEFT JOIN` to identify dead stock, including products with zero sales.
+7. Used `INNER JOIN` to identify products with historical demand but zero current stock.
 
-## Apa yang Saya Pelajari
+## Key Findings
 
-- `LEFT JOIN` diperlukan agar produk tidak terjual tetap terlihat (dead stock), sementara `INNER JOIN` sudah cukup untuk lost sales karena hanya butuh produk dengan riwayat penjualan
-- Pre-agregasi data dalam subquery sebelum join membantu memisahkan order valid dari yang dibatalkan/dikembalikan secara akurat
-- Revenue dan unit terjual tidak selalu selaras, brand bisa punya revenue tertinggi tanpa menjual unit paling banyak
-- Stok rendah bukan satu masalah tunggal: dead stock butuh diskon, lost sales butuh restock mendesak
-- Klaim naratif perlu dicek ulang terhadap hasil data aktual, bukan hanya logika query. Draf awal analisis ini sempat menyebut permintaan merata antar brand, tapi setelah dicek ulang, dua brand ternyata menyumbang 70% dari Top 10
+### Top 10 Products Are Concentrated in Two Brands
 
-## Files
+Riang Apparel contributed 4 out of 10 products in the Top 10 list, while Tropika Style contributed 3 products.
 
-- `Gayanara_top_10_produk_terlaris.sql` — Top 10 best-selling products
-- `Gayanara_Brand_dengan_Revenue_Terbesar.sql` — Revenue by brand
-- `Gayanara_Lost_Sales.sql` — Products with strong sales history but zero stock
-- `Gayanara_Dead_Stock.sql` — Unsold inventory (zero sales, stock > 0)
+Together, these two brands represented 70% of the Top 10 best-selling products. Demand is concentrated, not evenly distributed across brands.
 
-## Full Project Write-up
-[Notion Portfolio](https://bit.ly/4fgJ6Zv)
+### Revenue and Unit Sales Are Different
+
+Riang Apparel generated the highest revenue at **Rp67.939.000**, followed by NusaBrand at **Rp67.409.000**.
+
+NusaBrand did not appear in the Top 10 best-selling products. This indicates that it generated high revenue with fewer units sold, likely because of a higher average selling price.
+
+### One Product Is Dead Stock
+
+**Leather Belt** from Kanvas Lokal had:
+
+- 120 units in stock
+- Zero sales
+
+The product should be considered for discount, bundling, or promotion rather than restocking.
+
+### Eleven Products Have Stockout Risk
+
+Eleven products had historical sales but zero current stock.
+
+**Dress Mini Casual** from Riang Apparel had the highest lost-sales volume among out-of-stock products. This supports the finding that Riang Apparel has the strongest demand and should be prioritized in restocking decisions.
+
+## Recommendations
+
+1. Prioritize restocking products in the stockout-risk list, especially Dress Mini Casual from Riang Apparel.
+2. Do not restock Leather Belt from Kanvas Lokal before reducing its existing inventory.
+3. Use discounts, bundles, or promotions to move dead stock.
+4. Treat Riang Apparel as a volume-driven brand and prioritize availability for its highest-demand products.
+5. Evaluate NusaBrand with a higher-value product strategy because of its strong revenue contribution despite lower unit volume.
+
+## Important Data Validation
+
+During the project, I identified and fixed several analysis issues:
+
+- The first revenue query used `unit_price_idr` instead of `subtotal_idr`, which underestimated total brand revenue.
+- A filter for order status was initially placed in the `WHERE` clause, which broke the `LEFT JOIN` and excluded valid zero-sales products from dead stock analysis.
+- Initial date conversion during CSV import failed because the original format was incompatible with `DATETIME`.
+- An early narrative conclusion stated that demand was evenly distributed, but result validation showed that two brands accounted for 70% of the Top 10 products.
+
+## Future Improvements
+
+- Analyze monthly sales trends using `order_date`.
+- Calculate repeat purchase behavior and average order value.
+- Use `customers` and `reviews` tables for customer segmentation and satisfaction analysis.
+- Add product-level profitability if cost data becomes available.
+
+## SQL Files
+
+- `Gayanara_top_10_produk_terlaris.sql`  
+  Identifies the Top 10 best-selling products.
+
+- `Gayanara_Brand_dengan_Revenue_Terbesar.sql`  
+  Calculates and ranks total revenue by brand.
+
+- `Gayanara_Lost_Sales.sql`  
+  Identifies products with historical sales but zero current stock.
+
+- `Gayanara_Dead_Stock.sql`  
+  Identifies products with available inventory but zero sales.
+
+## Full Case Study
+
+Read the complete case study, including detailed business context, query explanations, and learning notes:
+
+Notion: [https://bit.ly/4fgJ6Zv]
+
+## Author
+
+**Sayed Furqan**
+
+Portfolio: [sayedfurqan.lovable.app](https://sayedfurqan.lovable.app/)
