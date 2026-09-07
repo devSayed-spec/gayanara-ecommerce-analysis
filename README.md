@@ -8,7 +8,7 @@ Role: Data Analyst, Independent Project
 Tools: MySQL
 Completed: July 2026
 
-This project was completed independently using a dataset and business case provided by Ngulik Data.
+This project was completed independently using a dataset and business case provided by [Ngulik Data](https://ngulikdata.com/datasets/gayanara).
 
 ## Business Problem
 
@@ -127,7 +127,7 @@ Among the out-of-stock products, Dress Mini Casual from Riang Apparel had the st
 
 ## Full Case Study
 
-For the complete business context, detailed SQL explanations, and learning notes, read the full case study on Notion: Read the full Gayanara Sales and Inventory Analysis case study.
+For the complete business context, detailed SQL explanations, and learning notes, read the full case study on Notion: [Read the full Gayanara Sales and Inventory Analysis case study](https://app.notion.com/p/df5665ac3b5f82e68cb081aa60ad3615?v=537665ac3b5f82ba9d51883f51ee2f4c&p=7e2665ac3b5f8365b8cf01f224b36b90&pm=c).
 
 ## Author
 
