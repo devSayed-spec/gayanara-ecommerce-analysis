@@ -2,6 +2,14 @@
 
 SQL portfolio project analyzing sales and inventory data for an online fashion store, identifying which products and brands to prioritize for restock, which stock to discount, and where lost sales are hiding.
 
+## TL;DR
+Gayanara's buying team had a limited restock budget and needed data-driven priorities.
+I joined 5 tables in MySQL to rank best sellers, brand revenue, dead stock, and potential lost sales.
+Two brands (Riang Apparel + Tropika Style) make up 70% of the Top 10; the Leather Belt sits on 120 units of dead stock;
+11 products with sales history are currently out of stock, led by Dress Mini Casual (Riang Apparel) as the top restock priority.
+Recommendation: restock products with lost sales first, push dead stock via discount/bundle, and treat Riang Apparel (volume) and NusaBrand (revenue, high ASP) differently.
+Dataset: [Gayanara: Toko Fashion Online](https://ngulikdata.com/datasets/gayanara), NgulikData.
+
 ## Project Information
 
 Role: Data Analyst, Independent Project
